@@ -1,18 +1,19 @@
-def normalize_question(q: str) -> str:
-    """Normalize a question to detect duplicates by meaning (basic)."""
-    q = q.lower().strip()
-    q = re.sub(
-        r'^(can you|could you|do you think|describe|talk about|tell me about|would you rather|if you could)\s+',
-        '',
-        q,
-    )
-    q = re.sub(r'[?.!,]', '', q)  # remove punctuation
-    return q.strip()
+import re
+
+from groq import Groq
+from core.config import GROQ_API_KEY
+from utils.text_utils import normalize_question
+
+client = Groq(api_key=GROQ_API_KEY)
+
+# In-memory set to track already-asked questions within a session
+asked_questions: set = set()
 
 
 def _generate_unique_question(prompt: str) -> dict:
     """Generic helper that ensures uniqueness of generated questions."""
     try:
+        question = ""
         for _ in range(5):
             response = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
@@ -56,7 +57,13 @@ def generate_part1_questions() -> dict:
     - Suitable for a 20–30 second answer.
     - Return ONLY the question text.
     """
-    return {"questions": [_generate_unique_question(prompt)["question"] for _ in range(3)]}
+    questions = []
+    for _ in range(3):
+        result = _generate_unique_question(prompt)
+        if "error" in result:
+            return result
+        questions.append(result["question"])
+    return {"questions": questions}
 
 
 def generate_part2_question() -> dict:
@@ -85,20 +92,10 @@ def generate_part3_questions() -> dict:
     - Suitable for a 30–40 second thoughtful answer.
     - Return ONLY the question text.
     """
-    return {"questions": [_generate_unique_question(prompt)["question"] for _ in range(3)]}
-
-
-# ----------- API ROUTES -----------
-
-@app.get("/generate-part1")
-async def generate_part1():
-    return generate_part1_questions()
-
-@app.get("/generate-part2")
-async def generate_part2():
-    return generate_part2_question()
-
-@app.get("/generate-part3")
-async def generate_part3():
-    return generate_part3_questions()
-
+    questions = []
+    for _ in range(3):
+        result = _generate_unique_question(prompt)
+        if "error" in result:
+            return result
+        questions.append(result["question"])
+    return {"questions": questions}

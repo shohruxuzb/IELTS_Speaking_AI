@@ -1,5 +1,12 @@
+from typing import List, Dict
 
-def aggregate_evaluations(evaluations: list[dict]) -> dict:
+from groq import Groq
+from core.config import GROQ_API_KEY
+
+client = Groq(api_key=GROQ_API_KEY)
+
+
+def aggregate_evaluations(evaluations: List[Dict]) -> dict:
     """
     Combine multiple evaluations (from Part 1, 2, 3) into one overall IELTS result.
     Weighted scoring:
@@ -40,7 +47,3 @@ def aggregate_evaluations(evaluations: list[dict]) -> dict:
     }
 
     return overall_result
-
-
-class EvaluationsRequest(BaseModel):
-    evaluations: List[Dict]

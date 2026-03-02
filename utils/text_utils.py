@@ -1,3 +1,6 @@
+import re
+
+
 def normalize_question(q: str) -> str:
     """Normalize a question to detect duplicates by meaning (basic)."""
     q = q.lower().strip()

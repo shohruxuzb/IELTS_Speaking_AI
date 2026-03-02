@@ -1,3 +1,12 @@
+import json
+from typing import List
+
+from groq import Groq
+from core.config import GROQ_API_KEY
+
+client = Groq(api_key=GROQ_API_KEY)
+
+
 def evaluate_ielts_with_improvements(questions: List[str], answers: List[str]) -> dict:
     """
     Evaluate IELTS answers across one or multiple questions,
@@ -23,7 +32,7 @@ Tasks:
 3. Mention strengths and weaknesses.
 4. For each answer, provide an improved version (same meaning, but more natural and fluent).
 
-Candidate’s responses:
+Candidate's responses:
 {qa_pairs}
 
 Return ONLY valid JSON with this structure:
@@ -51,4 +60,3 @@ Return ONLY valid JSON with this structure:
         return result_json
     except Exception as e:
         return {"error": str(e)}
-
