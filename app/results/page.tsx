@@ -49,7 +49,7 @@ export default function Results() {
         const aggregatedResult = await postAPI<AggregatedResult>(
           "/aggregate-results",
           aggregatedData,
-          token
+          token || undefined
         );
         setResult(aggregatedResult);
       } catch (err) {
