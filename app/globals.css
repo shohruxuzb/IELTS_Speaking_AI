@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Primary colors */
+  --primary: #1e3a5f;
+  --accent: #f0a500;
+  
+  /* Backgrounds */
+  --background: #f8f9fc;
+  --foreground: #1a1a1a;
+  
+  /* Status colors */
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #0ea5e9;
+  
+  /* Neutrals */
+  --muted: #9ca3af;
+  --muted-foreground: #6b7280;
+  --border: #e5e7eb;
+  --input: #ffffff;
+  --ring: #f0a500;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  
+  /* Radius */
+  --radius: 0.5rem;
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground;
+}
+
+@layer components {
+  .btn-primary {
+    @apply rounded-full px-6 py-3 bg-accent text-primary font-semibold hover:opacity-90 transition-opacity;
+  }
+
+  .btn-secondary {
+    @apply rounded-full px-6 py-3 bg-primary text-white font-semibold hover:opacity-90 transition-opacity;
+  }
+
+  .card-base {
+    @apply rounded-2xl bg-card text-card-foreground shadow-lg;
+  }
+
+  .input-base {
+    @apply w-full rounded-lg border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent;
+  }
+}
