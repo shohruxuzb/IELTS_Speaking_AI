@@ -1,9 +1,22 @@
 @"
-# venv
-.venv*
-venv/
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
 
-# Python cache
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Python
+venv/
+.venv*
 __pycache__/
 *.pyc
 *.pyo
@@ -11,10 +24,22 @@ __pycache__/
 
 # Environment variables
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Editors / OS
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 .DS_Store
 Thumbs.db
 "@ | Out-File -Encoding utf8 .gitignore
