@@ -49,7 +49,7 @@ export default function Part3() {
       try {
         const data = await getAPI<{ questions: Question[] }>(
           "/generate-part3",
-          token
+          token || undefined
         );
         setQuestions(data.questions || []);
       } catch (err) {
@@ -109,7 +109,7 @@ export default function Part3() {
       const result = await postAPI<PartResult>(
         "/evaluate",
         evaluationData,
-        token
+        token || undefined
       );
       setPart3Result(result);
       router.push("/results");

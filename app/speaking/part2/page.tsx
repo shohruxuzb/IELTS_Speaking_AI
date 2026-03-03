@@ -57,7 +57,7 @@ export default function Part2() {
   useEffect(() => {
     const loadCueCard = async () => {
       try {
-        const data = await getAPI<CueCard>("/generate-part2", token);
+        const data = await getAPI<CueCard>("/generate-part2", token || undefined);
         setCueCard(data);
       } catch (err) {
         setError(
@@ -167,7 +167,7 @@ export default function Part2() {
       const result = await postAPI<PartResult>(
         "/evaluate",
         evaluationData,
-        token
+        token || undefined
       );
       setPart2Result(result);
       router.push("/speaking/part3");

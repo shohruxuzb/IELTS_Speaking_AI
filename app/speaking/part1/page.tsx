@@ -49,7 +49,7 @@ export default function Part1() {
       try {
         const data = await getAPI<{ questions: Question[] }>(
           "/generate-part1",
-          token
+          token || undefined
         );
         setQuestions(data.questions || []);
       } catch (err) {
@@ -109,7 +109,7 @@ export default function Part1() {
       const result = await postAPI<PartResult>(
         "/evaluate",
         evaluationData,
-        token
+        token || undefined
       );
       setPart1Result(result);
       router.push("/speaking/part2");
