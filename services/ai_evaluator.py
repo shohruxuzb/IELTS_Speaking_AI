@@ -3,8 +3,10 @@ from typing import List
 
 from groq import Groq
 from core.config import GROQ_API_KEY
+from core.logging import get_logger
 
 client = Groq(api_key=GROQ_API_KEY)
+logger = get_logger(__name__)
 
 
 def evaluate_ielts_with_improvements(questions: List[str], answers: List[str]) -> dict:
@@ -59,4 +61,5 @@ Return ONLY valid JSON with this structure:
         result_json = json.loads(text_output[text_output.index("{"): text_output.rindex("}")+1])
         return result_json
     except Exception as e:
-        return {"error": str(e)}
+        logger.error("AI evaluation failed: %s", e, exc_info=True)
+        return {"error": "Evaluation failed. Please try again later."}

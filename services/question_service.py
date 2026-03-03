@@ -2,9 +2,11 @@ import re
 
 from groq import Groq
 from core.config import GROQ_API_KEY
+from core.logging import get_logger
 from utils.text_utils import normalize_question
 
 client = Groq(api_key=GROQ_API_KEY)
+logger = get_logger(__name__)
 
 # In-memory set to track already-asked questions within a session
 asked_questions: set = set()
@@ -40,7 +42,8 @@ def _generate_unique_question(prompt: str) -> dict:
 
         return {"question": question, "note": "⚠️ Might be semantically similar"}
     except Exception as e:
-        return {"error": str(e)}
+        logger.error("Question generation failed: %s", e, exc_info=True)
+        return {"error": "Question generation failed. Please try again later."}
 
 
 # ----------- IELTS PART-SPECIFIC GENERATORS -----------

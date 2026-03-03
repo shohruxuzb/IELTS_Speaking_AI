@@ -1,42 +1,84 @@
 import json
 import tempfile
-from typing import List
+import uuid
+from typing import List, Optional
 
-from fastapi import APIRouter, File, Form, UploadFile, Depends
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, Depends, Query, status
+from fastapi.responses import JSONResponse
 
 from core.rate_limiter import check_rate_limit
-from services.ai_evaluator import evaluate_ielts_with_improvements
-from services.speech_service import transcribe_audio
+from core.cache import cache_set
+from core.config import JOB_TTL
+from core.logging import get_logger
+from utils.file_validator import validate_audio_file
+from workers.tasks import run_evaluation
 
 router = APIRouter()
+logger = get_logger(__name__)
 
 
-@router.post("/evaluate")
+@router.post("/evaluate", status_code=status.HTTP_202_ACCEPTED)
 async def evaluate(
     questions: str = Form(...),
     answers: str = Form(...),
+    part: int = Form(1),                       # which IELTS part (1 | 2 | 3)
     audios: List[UploadFile] = File(None),
     username: str = Depends(check_rate_limit),
 ):
     """
-    Evaluate IELTS speaking performance.
-    - Supports Part 1 & 3 (3 Q/As) and Part 2 (1 Q/A).
-    - Returns scores + improved versions of answers.
-    - Requires authentication (Bearer token).
+    Submit an IELTS evaluation job.
+
+    Returns `{"job_id": "..."}` immediately (HTTP 202).
+    Poll `GET /jobs/{job_id}` for the result.
+    Audio files: max 10 MB, max 180 s, WAV/MP3/OGG/M4A/WebM only.
     """
-    questions = json.loads(questions) if isinstance(questions, str) else questions
-    answers = json.loads(answers) if isinstance(answers, str) else answers
+    # ── Parse JSON inputs ─────────────────────────────────────────────────────
+    try:
+        questions_parsed = json.loads(questions) if isinstance(questions, str) else questions
+        answers_parsed = json.loads(answers) if isinstance(answers, str) else answers
+    except json.JSONDecodeError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="'questions' and 'answers' must be valid JSON arrays.",
+        )
 
+    if not questions_parsed or not answers_parsed or len(questions_parsed) != len(answers_parsed):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Questions and answers must be non-empty and the same length.",
+        )
+
+    if part not in (1, 2, 3):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="'part' must be 1, 2, or 3.",
+        )
+
+    # ── Validate and save audio to named temp files ───────────────────────────
+    audio_paths: List[str] = []
     if audios:
-        transcripts = []
         for audio in audios:
+            audio_bytes = await validate_audio_file(audio)
             with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-                tmp.write(await audio.read())
-                transcripts.append(transcribe_audio(tmp.name))
-        answers = transcripts
+                tmp.write(audio_bytes)
+                audio_paths.append(tmp.name)
 
-    if not questions or not answers or len(questions) != len(answers):
-        return {"error": "Questions and answers must be same length and non-empty"}
+    # ── Enqueue background job ────────────────────────────────────────────────
+    job_id = str(uuid.uuid4())
+    cache_set(f"job:{job_id}", {"status": "pending"}, JOB_TTL)
 
-    evaluation = evaluate_ielts_with_improvements(questions, answers)
-    return {"answers": answers, "evaluation": evaluation}
+    run_evaluation.delay(
+        job_id,
+        questions_parsed,
+        answers_parsed,
+        audio_paths,
+        username=username,
+        part=part,
+    )
+
+    logger.info("Evaluation job %s queued for user '%s' (part %d)", job_id, username, part)
+
+    return JSONResponse(
+        status_code=status.HTTP_202_ACCEPTED,
+        content={"job_id": job_id, "status": "pending"},
+    )
