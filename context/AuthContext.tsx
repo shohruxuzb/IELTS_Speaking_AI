@@ -43,6 +43,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fullName: string
   ) => {
     try {
+      console.log("[v0] Register attempt:", { email, apiUrl: API_URL });
+
       const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,11 +53,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!response.ok) {
         const error = await response.json();
+        console.error("[v0] Registration failed:", error);
         throw new Error(error.detail || "Registration failed");
       }
 
+      console.log("[v0] Registration successful");
       // Registration successful, user can now login
     } catch (error) {
+      console.error("[v0] Register error:", error instanceof Error ? error.message : String(error));
       throw error;
     }
   };
@@ -66,6 +71,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       formData.append("username", email);
       formData.append("password", password);
 
+      console.log("[v0] Login attempt:", { email, apiUrl: API_URL });
+
       const response = await fetch(`${API_URL}/auth/token`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -74,6 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!response.ok) {
         const error = await response.json();
+        console.error("[v0] Login failed:", error);
         throw new Error(error.detail || "Login failed");
       }
 
@@ -85,7 +93,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       localStorage.setItem("access_token", accessToken);
       localStorage.setItem("user_email", email);
+      console.log("[v0] Login successful");
     } catch (error) {
+      console.error("[v0] Login error:", error instanceof Error ? error.message : String(error));
       throw error;
     }
   };

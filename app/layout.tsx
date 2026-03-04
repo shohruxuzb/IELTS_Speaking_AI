@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { APIErrorBoundary } from "@/components/APIErrorBoundary";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,7 +35,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${ibmPlexMono.variable} font-sans antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <APIErrorBoundary>
+          <AuthProvider>{children}</AuthProvider>
+        </APIErrorBoundary>
       </body>
     </html>
   );

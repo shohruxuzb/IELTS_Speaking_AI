@@ -46,8 +46,13 @@ yarn install
 
 3. Set up environment variables:
 ```bash
-cp .env.example .env.local
-# Edit .env.local and set NEXT_PUBLIC_API_URL
+# Create .env.local with the backend API URL
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+```
+
+**Environment Variables:**
+- `NEXT_PUBLIC_API_URL`: Backend API URL (default: `http://localhost:8000` for local development)
+  - For production, update to your deployed backend URL (e.g., `https://your-api.vercel.app`)
 ```
 
 4. Run the development server:

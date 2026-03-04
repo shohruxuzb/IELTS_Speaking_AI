@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from api import (
     routes_auth,
     routes_eval,
@@ -13,6 +14,21 @@ app = FastAPI(
     title="IELTS Speaking AI",
     description="AI-powered IELTS Speaking test simulator and evaluator.",
     version="1.0.0",
+)
+
+# Enable CORS for frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000",
+        "https://*.vercel.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Auth (public)

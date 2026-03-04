@@ -18,29 +18,38 @@ export async function fetchAPI<T>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...fetchOptions,
-    headers,
-  });
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      ...fetchOptions,
+      headers,
+    });
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("user_email");
-      window.location.href = "/login";
+    if (!response.ok) {
+      if (response.status === 401) {
+        // Token expired or invalid
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user_email");
+        window.location.href = "/login";
+      }
+
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || `API error: ${response.status}`);
     }
 
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || `API error: ${response.status}`);
-  }
+    // Handle empty responses (like 204 No Content)
+    if (response.headers.get("content-length") === "0") {
+      return {} as T;
+    }
 
-  // Handle empty responses (like 204 No Content)
-  if (response.headers.get("content-length") === "0") {
-    return {} as T;
+    return response.json();
+  } catch (error) {
+    console.error("[v0] API call failed:", {
+      endpoint,
+      apiUrl: API_URL,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
   }
-
-  return response.json();
 }
 
 export async function postAPI<T>(
