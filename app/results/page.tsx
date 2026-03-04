@@ -1,5 +1,8 @@
 "use client";
 
+
+
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTest } from "@/context/TestContext";
@@ -234,7 +237,7 @@ export default function Results() {
                       transition={{ delay: 0.3 + i * 0.05 }}
                       className="flex items-start gap-2 text-foreground"
                     >
-                      <span className="text-success mt-1">✓</span>
+                      <span className="text-success mt-1">вњ“</span>
                       <span>{strength}</span>
                     </motion.li>
                   ))}
@@ -255,7 +258,7 @@ export default function Results() {
                       transition={{ delay: 0.3 + i * 0.05 }}
                       className="flex items-start gap-2 text-foreground"
                     >
-                      <span className="text-warning mt-1">⚠</span>
+                      <span className="text-warning mt-1">вљ </span>
                       <span>{area}</span>
                     </motion.li>
                   ))}
@@ -294,7 +297,7 @@ export default function Results() {
                     >
                       <span>{key}</span>
                       <span className="text-xl">
-                        {expandedSection === key ? "−" : "+"}
+                        {expandedSection === key ? "в€’" : "+"}
                       </span>
                     </button>
 

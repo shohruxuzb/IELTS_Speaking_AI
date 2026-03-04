@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -81,7 +83,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-base"
-                placeholder="••••••••"
+                placeholder="вЂўвЂўвЂўвЂўвЂўвЂўвЂўвЂў"
                 required
                 disabled={loading}
               />

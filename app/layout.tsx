@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { TestProvider } from "@/context/TestContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -17,11 +18,6 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "IELTS Speaking AI",
   description: "Practice IELTS Speaking with AI-powered evaluation",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
 };
 
 export default function RootLayout({
@@ -34,7 +30,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${ibmPlexMono.variable} font-sans antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <TestProvider>
+            {children}
+          </TestProvider>
+        </AuthProvider>
       </body>
     </html>
   );

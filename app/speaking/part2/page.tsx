@@ -1,5 +1,9 @@
 "use client";
 
+
+
+
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTest } from "@/context/TestContext";
@@ -250,7 +254,7 @@ export default function Part2() {
                 <ul className="space-y-2">
                   {cueCard.hints.map((hint, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <span className="text-accent mt-1">•</span>
+                      <span className="text-accent mt-1">вЂў</span>
                       <span className="text-foreground">{hint}</span>
                     </li>
                   ))}
@@ -287,7 +291,7 @@ export default function Part2() {
             )}
             {phase === Phase.DONE && (
               <div className="text-center">
-                <div className="text-5xl mb-4">✓</div>
+                <div className="text-5xl mb-4">вњ“</div>
                 <p className="text-xl font-semibold text-success">
                   Time's up!
                 </p>
@@ -323,7 +327,7 @@ export default function Part2() {
 
             {recording && (
               <p className="text-sm text-success font-semibold">
-                ✓ Answer recorded
+                вњ“ Answer recorded
               </p>
             )}
           </div>

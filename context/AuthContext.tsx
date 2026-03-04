@@ -19,7 +19,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [email, setEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
   // Load token from localStorage on mount
   useEffect(() => {
@@ -46,12 +46,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, full_name: fullName }),
+        body: JSON.stringify({ username: email, password: password }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.detail || "Registration failed");
+        const errorMessage = typeof error.detail === "string"
+          ? error.detail
+          : (Array.isArray(error.detail) ? error.detail[0].msg : "Registration failed");
+        throw new Error(errorMessage);
       }
 
       // Registration successful, user can now login

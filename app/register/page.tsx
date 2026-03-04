@@ -29,7 +29,6 @@ export default function Register() {
       }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
-    } finally {
       setLoading(false);
     }
   };
@@ -37,8 +36,8 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary via-primary to-primary/80 flex items-center justify-center px-4 py-12">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
         className="w-full max-w-md"
       >
@@ -51,22 +50,15 @@ export default function Register() {
             </p>
           </div>
 
-          {/* Success Message */}
-          {success && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-success/10 border border-success text-success p-4 rounded-lg mb-6 text-center"
-            >
-              <p className="font-semibold">Registration successful!</p>
-              <p className="text-sm">Redirecting to login...</p>
-            </motion.div>
-          )}
-
-          {/* Error Message */}
+          {/* Messages */}
           {error && (
             <div className="bg-error/10 border border-error text-error p-4 rounded-lg mb-6 text-sm">
               {error}
+            </div>
+          )}
+          {success && (
+            <div className="bg-green-500/10 border border-green-500 text-green-600 p-4 rounded-lg mb-6 text-sm font-medium">
+              Registration successful! Redirecting to login...
             </div>
           )}
 

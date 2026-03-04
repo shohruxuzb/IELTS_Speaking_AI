@@ -1,5 +1,9 @@
 "use client";
 
+
+
+
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTest } from "@/context/TestContext";
@@ -204,7 +208,7 @@ export default function Part3() {
 
             {recordings[i] && (
               <div className="lg:ml-14 text-sm text-success font-semibold">
-                ✓ Answer recorded
+                вњ“ Answer recorded
               </div>
             )}
           </motion.div>
@@ -221,9 +225,8 @@ export default function Part3() {
         <button
           onClick={handleSubmit}
           disabled={!allAnswersFilled || isEvaluating}
-          className={`flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed ${
-            !allAnswersFilled ? "opacity-50" : ""
-          }`}
+          className={`flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed ${!allAnswersFilled ? "opacity-50" : ""
+            }`}
         >
           {isEvaluating ? "Evaluating..." : "Submit Part 3"}
         </button>
